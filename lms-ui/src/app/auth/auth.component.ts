@@ -2,80 +2,93 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AlertService} from '../alert/alert.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {LoginService} from './login.service';
-import {StudentForm} from "../login/student.form";
+import {AuthService} from './auth.service';
+import {SignUpForm} from './forms/signup.form';
+import {SignInForm} from './forms/signin.form';
+import {CustomValidationServiceService} from '../helpers/custom-validation-service.service';
+import {AuthResponse} from '../models/auth.response';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  selector: 'app-auth',
+  templateUrl: './auth.component.html'
 })
-export class LoginComponent implements OnInit {
+export class AuthComponent implements OnInit {
 
-  viewMode: string = 'login'
+  viewMode = 'login';
+  submitted = false;
 
-  loginForm: FormGroup = this.formBuilder.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required],
-  });
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private loginService: LoginService,
+    private authService: AuthService,
     private alertService: AlertService,
+    private customValidator: CustomValidationServiceService
   ) {
   }
 
+  signInformGroup: FormGroup = this.formBuilder.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required],
+  });
+
+  signUpFormGroup: FormGroup = this.formBuilder.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      dateOfBirth: ['', Validators.required],
+      email: ['', Validators.required],
+      phoneNumber: ['', Validators.required],
+      address: ['', Validators.required],
+      password: ['', Validators.compose([Validators.required, this.customValidator.patternValidator()])],
+      confirmPassword: ['', Validators.required]
+    },
+    {
+      validator: this.customValidator.matchPassword('password', 'confirmPassword'),
+    }
+  );
 
   ngOnInit(): void {
     sessionStorage.setItem('token', '');
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      const user: { username: string, password: string } = this.loginForm.value;
-      this.loginService.login(user).subscribe(isValid => {
-        if (isValid) {
-          sessionStorage.setItem('token', btoa(user.username + ':' + user.password));
-          this.router.navigate(['/']);
-        } else {
-          this.alertService.warning('Authentication failed.');
-        }
-      });
-    }
-  }
-  studentForm: FormGroup = this.formBuilder.group({
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
-    dateOfBirth: ['', Validators.required],
-    email: ['', Validators.required],
-    phoneNumber: ['', Validators.required],
-    address: ['', Validators.required]
-  });
+    this.submitted = true;
+    console.log(this.signInformGroup);
+    if (this.signInformGroup.valid) {
+      const signInForm: SignInForm = this.signInformGroup.value;
+      const response: AuthResponse = this.authService.signIn(signInForm);
+      if (response) {
+        this.router.navigate(['/']);
+        this.signInformGroup.get('username')?.setValue(response.username);
+      }
 
-  onSubmitStudent(): void {
-    if (this.studentForm.valid) {
+    }
+  }
+
+
+  onSignUp(): void {
+    this.submitted = true;
+    console.log(this.signUpFormGroup.valid);
+    if (this.signUpFormGroup.valid) {
       this.alertService.clearAlerts();
-      const student: StudentForm = this.studentForm.value;
-      this.loginService.createStudent(student).subscribe(() => {
+      const signUp: SignUpForm = this.signUpFormGroup.value;
+      this.authService.signUp(signUp).subscribe(() => {
         this.alertService.success('User created, enter your credentials');
-       this.viewMode = 'login';
+        this.viewMode = 'login';
       });
     }
   }
-  validateEmail(): void {
-    console.log('validateEmail');
-  }
-  validatePassword(): void {
-    const student: StudentForm = this.studentForm.value;
-    // tslint:disable-next-line:triple-equals
-    if (student.registerPassword != student.registerRepeatedPassword){
-      this.alertService.error('Password must be equal!');
+
+  isFieldInvalid(field: string, form: FormGroup) {
+    if (form) {
+      // @ts-ignore
+      return ((!form.get(field).valid && form.get(field).touched) || (form.get(field).untouched && this.submitted));
     }
+    return true;
   }
 
   cancel(): void {
+    this.signUpFormGroup.reset();
     this.viewMode = 'login';
   }
 }

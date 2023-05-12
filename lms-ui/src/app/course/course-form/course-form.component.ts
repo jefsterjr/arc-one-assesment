@@ -1,23 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Course} from '../course.model';
+import {Course} from '../../models/course';
 import {CourseService} from '../course.service';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-course-create',
-  templateUrl: './course-form.component.html',
-  styleUrls: ['./course-form.component.css']
+  templateUrl: './course-form.component.html'
 })
 export class CourseFormComponent implements OnInit {
 
   course: Course = new Course();
 
   courseForm: FormGroup = this.formBuilder.group({
-    name: ['', Validators.required],
-    duration: [0, Validators.required],
-    startDate: ['', Validators.required],
-    endDate: [{value: '', disabled: true}]
+    name: ['', Validators.required]
   });
 
   constructor(
@@ -34,12 +30,17 @@ export class CourseFormComponent implements OnInit {
         this.courseService.findCourse(params.id).subscribe(course => {
           this.course = course;
           this.courseForm.controls.name.setValue(this.course.name);
-          this.courseForm.controls.duration.setValue(this.course.duration);
-          this.courseForm.controls.startDate.setValue(this.course.startDate);
-          this.courseForm.controls.endDate.setValue(this.course.endDate);
         });
       }
     });
+  }
+
+  isFieldInvalid(field: string, form: FormGroup): boolean {
+    if (form) {
+      // @ts-ignore
+      return ((!form.get(field).valid && form.get(field).touched) || (form.get(field).untouched && this.submitted));
+    }
+    return true;
   }
 
   onSubmit(): void {

@@ -10,7 +10,6 @@
   <thead>
   <tr>
     <th scope="col">Name</th>
-    <th scope="col">Duration</th>
     <th scope="col">Start Date</th>
     <th scope="col">End Date</th>
     <th scope="col">Options</th>
@@ -20,7 +19,6 @@
   <tbody>
   <tr *ngFor="let course of courses">
     <td>{{course.name}}</td>
-    <td>{{course.duration}}h</td>
     <td>{{course.startDate | date:'shortDate'}}</td>
     <td>{{course.endDate | date:'shortDate'}}</td>
     <td>

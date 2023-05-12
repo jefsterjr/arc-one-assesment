@@ -3,6 +3,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Course} from '../../models/course';
 import {CourseService} from '../../course/course.service';
 import {Router} from '@angular/router';
+import {CourseEnrollment} from '../../models/course-enrollment';
+import {CourseEnrollmentsService} from '../enrolled-courses.service';
 
 @Component({
   selector: 'app-course-enrollment',
@@ -15,7 +17,7 @@ export class CourseEnrollmentComponent implements OnInit {
 
   constructor(
     private courseService: CourseService,
-    private enrollmentService: CourseEnrollmentService
+    private enrollmentService: CourseEnrollmentsService
   ) {}
 
   ngOnInit(): void {
@@ -30,7 +32,7 @@ export class CourseEnrollmentComponent implements OnInit {
 
   enroll(courseId: number): void {
     const enrollment: CourseEnrollment = {
-      studentId: 1, // Replace with actual student ID
+      studentId: ''
       courseId
     };
 

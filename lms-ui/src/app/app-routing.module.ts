@@ -1,16 +1,25 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {StudentCreateComponent} from './student/student-create/student-create.component';
 import {CourseFormComponent} from './course/course-form/course-form.component';
 import {CourseListComponent} from './course/course-list/course-list.component';
-import {LoginComponent} from './login/login.component';
+import {AuthComponent} from './auth/auth.component';
+import {TaskLogFormComponent} from './task-logs/task-logs-form/task-log-form.component';
 
 const routes: Routes = [
-  {path: 'login', component: LoginComponent},
-  {path: 'students/create', component: StudentCreateComponent},
-  {path: 'courses', component: CourseListComponent},
-  {path: 'courses/create', component: CourseFormComponent},
-  {path: 'courses/:id/edit', component: CourseFormComponent},
+  {path: '', redirectTo: '/auth', pathMatch: 'full'},
+  {path: 'auth', component: AuthComponent},
+  {
+    path: 'courses', component: CourseListComponent,
+    children: [
+      {path: 'create', component: CourseFormComponent},
+      {path: 'edit/:id', component: CourseFormComponent}
+    ],
+  }, {
+    path: 'enrolled-courses', component: CourseListComponent,
+  },
+  {
+    path: 'task-logs', component: TaskLogFormComponent, // <-- add this route for the TaskLogComponent
+  }
 ];
 
 @NgModule({

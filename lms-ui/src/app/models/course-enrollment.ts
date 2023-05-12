@@ -1,6 +1,4 @@
-export class User {
-  public id: number | undefined;
-  public username: string | undefined;
-  public role: string | undefined;
-  public token?: string;
+export interface CourseEnrollment {
+  studentId: number;
+  courseId: number;
 }

@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { EnrolledCoursesRoutingModule } from './enrolled-courses-routing.module';
-import { EnrolledCousesListComponent } from './enrolled-couses-list/enrolled-couses-list.component';
+import { CourseEnrollmentsRoutingModule } from './enrolled-courses-routing.module';
+import { CourseEnrollmentComponent } from './course-enrollment/course-enrollment.component';
 
 
 @NgModule({
   declarations: [
-    EnrolledCousesListComponent
+    CourseEnrollmentComponent
   ],
   imports: [
     CommonModule,
-    EnrolledCoursesRoutingModule
+    CourseEnrollmentsRoutingModule
   ]
 })
-export class EnrolledCoursesModule { }
+export class CourseEnrollmentsModule { }

@@ -1,12 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {CourseService} from '../course.service';
-import {Course} from '../course.model';
-import {Router} from '@angular/router';
+import {Course} from '../../models/course';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-course-list',
-  templateUrl: './course-list.component.html',
-  styleUrls: ['./course-list.component.css']
+  templateUrl: './course-list.component.html'
 })
 export class CourseListComponent implements OnInit {
 
@@ -14,6 +13,7 @@ export class CourseListComponent implements OnInit {
 
   constructor(
     private courseService: CourseService,
+    private route: ActivatedRoute,
     private router: Router,
   ) {
   }
@@ -26,11 +26,11 @@ export class CourseListComponent implements OnInit {
   }
 
   create(): void {
-    this.router.navigate(['/course/create']);
+    this.router.navigate(['create'], {relativeTo: this.route});
   }
 
   edit(course: Course): void {
-    this.router.navigate([`/course/${course.id}/edit`]);
+    this.router.navigate([`edit/${course.id}`], {relativeTo: this.route});
   }
 
   delete(course: Course): void {
